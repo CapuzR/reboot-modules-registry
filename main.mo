@@ -1,4 +1,3 @@
-import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 import Result "mo:base/Result";
 import Buffer "mo:base/Buffer";
@@ -12,7 +11,7 @@ shared ({ caller = creator }) actor class moduleRegistry() = this {
 
     stable var id : Nat = 0;
 
-    //TODO: Implements a list of callers and its installed modules.
+    //TODO: Implements a list of callers and its installed modules, status for tracking, updating modules, etc.
 
     public shared func reboot_registry_registerModule(name : Text, version : Text, wasm : Blob) : async Result<(), Text> {
 
@@ -25,22 +24,6 @@ shared ({ caller = creator }) actor class moduleRegistry() = this {
         moduleBuff.add((id, name, version, wasm));
         modules := Buffer.toArray(moduleBuff);
         id += 1;
-
-        return #ok();
-    };
-
-    public shared func reboot_registry_updateModule(identifier : Nat, name : Text, version : Text, wasm : Blob) : async Result<(), Text> {
-
-        let moduleBuff : Buffer.Buffer<(Nat, Text, Text, Blob)> = Buffer.fromArray(modules);
-
-        for (mod in moduleBuff.vals()) {
-            if (mod.0 == identifier) {
-                moduleBuff.filterEntries(func (_, x : (Nat, Text, Text, Blob)) : Bool { x.0 != identifier });
-            };
-        };
-
-        moduleBuff.add((identifier, name, version, wasm));
-        modules := Buffer.toArray(moduleBuff);
 
         return #ok();
     };
