@@ -28,6 +28,24 @@ shared ({ caller = creator }) actor class moduleRegistry() = this {
         return #ok();
     };
 
+    public shared func reboot_registry_getModule(name : Text, version : Text) : async Result<{ id : Nat; name : Text; version : Text; wasm : Blob }, Text> {
+
+        let moduleBuff : Buffer.Buffer<(Nat, Text, Text, Blob)> = Buffer.fromArray(modules);
+
+        for (mod in moduleBuff.vals()) {
+            if (mod.1 == name and mod.2 == version) {
+                return #ok({
+                    id = mod.0;
+                    name = mod.1;
+                    version = mod.2;
+                    wasm = mod.3;
+                });
+            };
+        };
+
+        return #err("Module not found");
+    };
+
     public shared func reboot_registry_getModuleByName(name : Text) : async Result<{ id : Nat; name : Text; version : Text; wasm : Blob }, Text> {
 
         let moduleBuff : Buffer.Buffer<(Nat, Text, Text, Blob)> = Buffer.fromArray(modules);
